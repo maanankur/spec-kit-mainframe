@@ -1,0 +1,12 @@
+{
+  "_readme": [
+    "Phase 4 judgement input: modernization/4-architecture/scores.json. One entry per context except the shared kernel and retired contexts.",
+    "axes (0-3 each): throughput, independent_scaling, change_frequency, data_ownership, transactional_independence, availability, team.",
+    "Verdict (architect.py): 0-7 module; 8-13 module, extraction candidate; 14-21 service only if data_ownership and transactional_independence >= 2; axis 4 or 5 = 0 forces module.",
+    "List in `assumed` every axis you scored without runtime evidence (no SMF/CICS statistics, no job accounting). Every assumed score becomes a G3 question."
+  ],
+  "axes": ["throughput", "independent_scaling", "change_frequency", "data_ownership", "transactional_independence", "availability", "team"],
+  "contexts": {
+    "BC-01": {"scores": [1, 0, 1, 3, 3, 1, 1], "assumed": ["throughput", "independent_scaling"], "note": "<why these scores, with the evidence: exclusive owner of X; writes Y through Z>"}
+  }
+}

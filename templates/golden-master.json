@@ -1,0 +1,22 @@
+{
+  "_readme": [
+    "target/ops/golden-master.json -- which legacy outputs are compared with which target exports (golden_master.py).",
+    "kind=records: fixed-width images keyed by the store's primary key; layout comes from 5-data/mapping.json for `store` (or an explicit `layout` [[name,offset,length,'text'|'zoned'],...]).",
+    "runtime_fields: columns the program sets from the clock; both sides must match runtime_patterns[<field>] (or '*') to count as explained.",
+    "kind=text: line-by-line after noise_patterns are removed; labelled_values=true compares '<label>:<zoned value>' listing lines as decimals.",
+    "use_cases: the UC ids this pair proves -- feeds use_case_coverage.py."
+  ],
+  "legacy_out": "target/legacy/out",
+  "java_out": "target/ops/out/java",
+  "noise_patterns": ["^RC=\\d+", "^--- stderr", "^libcob:"],
+  "runtime_patterns": {"*": "\\d{4}-\\d{2}-\\d{2}-\\d{2}\\.\\d{2}\\.\\d{2}\\.\\d{6}"},
+  "explanations": {
+    "runtime field": "value set from the run's clock (rule <BR-nnnn>); the shape is compared and identical",
+    "sign representation": "GnuCOBOL DISPLAY prints a trailing sign where IBM prints an overpunch letter; both decode to the same decimal"
+  },
+  "pairs": [
+    {"label": "<STORE> after <JOB>", "kind": "records", "store": "<STORE>", "legacy": "post/<STORE>.txt", "java": "<STORE>.after-<job>.txt", "runtime_fields": ["<proc_ts column>"], "use_cases": ["UC-001"]},
+    {"label": "<JOB> report", "kind": "text", "legacy": "<REPORT>.txt", "java": "<REPORT>.txt", "use_cases": ["UC-002"]},
+    {"label": "<JOB> listing", "kind": "text", "legacy": "sysout/<JOB>.sysout.txt", "java": "<JOB>.sysout.txt", "labelled_values": true, "label_width": 25, "use_cases": ["UC-003"]}
+  ]
+}

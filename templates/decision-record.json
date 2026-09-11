@@ -1,0 +1,30 @@
+{
+  "$schema": "../schemas/decision-record.schema.json",
+  "gate": "G3",
+  "project": "<project>",
+  "artifact_manifest": [
+    {
+      "path": "modernization/4-architecture/architecture.md",
+      "sha256": "<hex>"
+    }
+  ],
+  "decision": "approved | approved-with-conditions | rejected | waived",
+  "conditions": [],
+  "waiver": {
+    "risk": null,
+    "compensating_control": null,
+    "owner": null,
+    "expires": null
+  },
+  "approvers": [
+    {
+      "role": "chief-architect",
+      "id": "<id>",
+      "at": "<iso8601>",
+      "signature": "<sig>"
+    }
+  ],
+  "proposed_by": "<id, must differ from every approver>",
+  "graph_snapshot": "tag:<gate>-<date>",
+  "created_at": "<iso8601>"
+}

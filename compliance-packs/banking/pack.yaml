@@ -1,0 +1,48 @@
+name: banking
+version: "1.0"
+regimes: [PCI-DSS-4.0, SOX, BCBS-239, PSD2]
+
+controls:
+  - id: PCI-3.4
+    title: PAN must be unreadable wherever stored
+    applies_to: [TargetColumn]
+    check: policy/pan_tokenization.rego
+    evidence: [schema.sql, encryption-design.md, sast-report]
+    blocks: [G4, G5]
+
+  - id: PCI-10
+    title: Audit trail for all access to cardholder data
+    applies_to: [Component, Endpoint]
+    check: policy/audit_logging.rego
+    evidence: [audit-design.md, integration-test-report]
+    blocks: [G5]
+
+  - id: SOX-CHG
+    title: Segregation of duties and evidenced change control
+    applies_to: [DecisionRecord, Approval]
+    check: policy/sod.rego          # proposer != approver, quorum met, hashes valid
+    evidence: [gate-ledger-export]
+    blocks: [G5, G6, G7]
+
+  - id: BCBS-239-LINEAGE
+    title: Complete, demonstrable lineage for risk-relevant data
+    applies_to: [BusinessRule, TargetColumn]
+    check: policy/lineage_completeness.rego
+    evidence: [graph-trace-export]
+    blocks: [G4, G6]
+
+  - id: PSD2-SCA
+    title: Strong customer authentication on payment initiation
+    applies_to: [Endpoint]
+    check: policy/sca.rego
+    evidence: [threat-model.md, security-report.md]
+    blocks: [G6]
+
+gate_pack_additions:
+  G1: ["List every regulatory rule discovered in the legacy code, with its source paragraphs."]
+  G3: ["State the data residency and segmentation design for cardholder data."]
+  G6: ["Report equivalence confidence separately for money-handling paths."]
+
+retention:
+  audit_log_years: 7
+  evidence_pack_years: 7

@@ -1,0 +1,1 @@
+{"id": "UC-001", "name": "<Verb + object, business language>", "context": "BC-01", "kind": "online | batch | service", "trigger": "<transaction id / JCL job / MQ queue>", "programs": ["<PROGRAM>"], "rules": ["BR-0001", "BR-0002"], "source": "spec.md §<domain> ### Processes"}

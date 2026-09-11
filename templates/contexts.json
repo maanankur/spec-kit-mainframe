@@ -1,0 +1,37 @@
+{
+  "_readme": [
+    "Phase 3 judgement input, written by the domain-modeling agent into modernization/3-domain/contexts.json.",
+    "decompose.py computes everything else (rules per context, reads, shared writes, unowned stores, glossary).",
+    "Every program in 1-discovery/inventory.json must appear in exactly one context. Store names are the",
+    "canonical names from dependencies.json store_identity (resolved_to); add store_aliases only for names",
+    "the deterministic plane could not resolve, and say why in decisions."
+  ],
+  "contexts": [
+    {
+      "id": "BC-00", "name": "Shared Kernel", "kind": "shared-kernel",
+      "programs": ["<utility subroutines CALLed from several contexts>"], "copybooks": ["<shared copybooks>"],
+      "owned_stores": [], "purpose": "<what it provides; not a domain>",
+      "aggregates": [], "events_out": [], "events_in": [],
+      "confidence": "high", "rationale": "<why these are shared, with evidence: called from N contexts>"
+    },
+    {
+      "id": "BC-01", "name": "<Business name>", "kind": "domain | reference | utility",
+      "programs": ["<PROGRAM>"], "owned_stores": ["<STORE>"],
+      "purpose": "<one paragraph, business language>",
+      "aggregates": [{"root": "<Aggregate>", "identity": "<legacy key field>", "entities": [], "invariants": ["<rule id or statement>"]}],
+      "events_out": ["<PastTenseEvent>"], "events_in": [],
+      "confidence": "high | medium | low",
+      "rationale": "<why this boundary: exclusive writer of X; cluster Cnn minus Y because Z>"
+    }
+  ],
+  "shared_write_resolutions": [
+    {"store": "<STORE>", "writer": "<BC-nn that also writes it>", "resolution": "<owner exposes command C; writer calls it in the same unit of work>"}
+  ],
+  "relationships": [
+    {"pair": "BC-02 ← BC-04", "type": "customer-supplier | conformist | published-language | shared-kernel | anticorruption-layer", "today": "<mechanism in the legacy>", "target": "<mechanism in the target>"}
+  ],
+  "decisions": [
+    "<Decision the approvers must make at G2, with the recommendation and the confidence>"
+  ],
+  "store_aliases": {}
+}

@@ -1,0 +1,17 @@
+{
+  "_readme": [
+    "Phase 4 judgement input: modernization/4-architecture/waves.json. architect.py prints the computed wave_score per context first;",
+    "order the waves from it, then apply the hard constraints of skills/phases/04 §4 and record each one you applied in `constraints`.",
+    "Every context must be in exactly one wave, or in `retired` (with the ADR that retires it). `merged` maps a context into another's module."
+  ],
+  "waves": [
+    {"n": 0, "name": "Shared kernel", "contexts": ["BC-00"], "proves": "the build pipeline, the structural lint, the traceability update and one golden-master harness on a pure function — before anything with a database", "scope": "<what is built>"},
+    {"n": 1, "name": "Reference data + read-only", "contexts": ["BC-0x"], "proves": "data migration, field maps, decoding, paging, one screen, one batch job — with no write risk. Deliberately boring.", "scope": "<what is built>"}
+  ],
+  "retired": [{"context": "BC-nn", "adr": "ADR-00n"}],
+  "merged": {},
+  "constraints": ["<constraint applied and why, e.g. reference data first although its score is not the lowest>"],
+  "wave1_exit": ["Migrated reference data with field-level reconciliation green (G4 evidence).", "One screen and one batch job passing the golden-master harness.", "A batch-window baseline captured from the legacy."],
+  "uncertainties": [["<item>", "low|medium|high", "<why uncertain>", "<what resolves it>"]],
+  "assumptions": ["Every throughput, scaling and availability score (no runtime statistics supplied)."]
+}

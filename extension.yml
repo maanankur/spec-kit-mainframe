@@ -1,0 +1,144 @@
+schema_version: "1.0"
+
+extension:
+  id: "mainframe"
+  name: "Mainframe Modernization (COBOL to Java)"
+  version: "1.0.0"
+  description: "Gated, evidence-driven COBOL-to-Java modernization: deterministic discovery, specification recovery with paragraph-level traceability, domain decomposition, target architecture, data modernization with a byte-level fidelity proof, forward engineering behind a specification firewall, and golden-master equivalence verification"
+  author: "Ankur Maan"
+  repository: "https://github.com/ankurmaan/spec-kit-mainframe"
+  license: "MIT"
+
+requires:
+  speckit_version: ">=0.1.0"
+  tools:
+    - name: "python"
+      required: true
+      version: ">=3.10"
+    - name: "docker"
+      required: false
+      version: ">=24.0"
+
+provides:
+  commands:
+    - name: "speckit.mainframe.modernize"
+      file: "commands/modernize.md"
+      description: "Bootstrap phases 0-1 on a COBOL application and drive the gated lifecycle to Java"
+    - name: "speckit.mainframe.assess"
+      file: "commands/assess.md"
+      description: "Read-only assessment: inventory, dependencies, hazards, gaps, effort"
+    - name: "speckit.mainframe.spec"
+      file: "commands/spec.md"
+      description: "Phase 2: recover the specification, propose G1"
+    - name: "speckit.mainframe.decompose"
+      file: "commands/decompose.md"
+      description: "Phase 3: bounded contexts, propose G2"
+    - name: "speckit.mainframe.architect"
+      file: "commands/architect.md"
+      description: "Phase 4: target architecture and waves, propose G3"
+    - name: "speckit.mainframe.data"
+      file: "commands/data.md"
+      description: "Phase 5: schema, mapping, fidelity proof, propose G4"
+    - name: "speckit.mainframe.build"
+      file: "commands/build.md"
+      description: "Phase 6: forward-engineer a wave from the specification, propose G5"
+    - name: "speckit.mainframe.verify"
+      file: "commands/verify.md"
+      description: "Phases 7-8: legacy harness, golden master, evidence packs G5-G7"
+    - name: "speckit.mainframe.gate"
+      file: "commands/gate.md"
+      description: "Approve, waive, reject or check a gate"
+    - name: "speckit.mainframe.status"
+      file: "commands/status.md"
+      description: "Phase, gates, hash integrity, coverage, waivers"
+    - name: "speckit.mainframe.constitution"
+      file: "commands/constitution.md"
+      description: "Add the modernization non-negotiables to the constitution"
+    - name: "speckit.mainframe.install-agents"
+      file: "commands/install-agents.md"
+      description: "Claude Code only: install sub-agent contracts and skills"
+
+  templates:
+    - name: "work-package-brief"
+      file: "templates/work-package-brief.md"
+      description: "Phase-2 reverse-engineering agent brief (rendered per work package by work_packages.py)"
+    - name: "spec-front-matter"
+      file: "templates/spec-front-matter.md"
+      description: "Purpose, NFRs, out-of-scope for the recovered specification"
+    - name: "contexts"
+      file: "templates/contexts.json"
+      description: "Phase-3 judgement input"
+    - name: "scores"
+      file: "templates/scores.json"
+      description: "Phase-4 style scores"
+    - name: "waves"
+      file: "templates/waves.json"
+      description: "Phase-4 wave plan"
+    - name: "golden-master"
+      file: "templates/golden-master.json"
+      description: "Golden-master comparison pairs"
+    - name: "use-cases"
+      file: "templates/use-cases.jsonl"
+      description: "Use-case list feeding the coverage gate"
+    - name: "gate-review"
+      file: "templates/gate-review.md"
+      description: "Review pack skeleton"
+
+  scripts:
+    - name: "mainframe-modernize"
+      file: "scripts/bash/modernize.sh"
+      description: "Phases 0-1 bootstrap + phase-2 planning (wraps scripts/modernize.py)"
+      runtimes: ["bash", "powershell"]
+    - name: "mainframe-gate-decide"
+      file: "scripts/bash/gate_decide.sh"
+      description: "The only writer of gate status"
+      runtimes: ["bash", "powershell"]
+
+  config:
+    - name: "mainframe-config.yml"
+      template: "mainframe-config.template.yml"
+      description: "Source path, output path, profile, industry, approvers, auto-approve"
+      required: false
+
+hooks:
+  after_constitution:
+    command: "speckit.mainframe.constitution"
+    priority: 10
+    optional: true
+    prompt: "Add the mainframe-modernization non-negotiables (read-only source, specification firewall, hash-bound gates) to the constitution?"
+    description: "Constitution principles for legacy modernization"
+  before_specify:
+    command: "speckit.mainframe.spec"
+    priority: 10
+    optional: true
+    prompt: "Does this feature replace COBOL behaviour? Recover its specification from the legacy source first (phase 2, Gate G1)?"
+    description: "Recovered specification as the input to the feature spec"
+  before_plan:
+    command: "speckit.mainframe.architect"
+    priority: 10
+    optional: true
+    prompt: "Derive the implementation plan from the G3-approved target architecture and wave plan?"
+    description: "Architecture, ADRs and waves feed plan.md"
+  after_tasks:
+    command: "speckit.mainframe.verify"
+    priority: 20
+    optional: true
+    prompt: "Attach golden-master and use-case-coverage evidence requirements to these tasks (Gate G5/G6)?"
+    description: "Evidence gates as task acceptance criteria"
+
+tags:
+  - "cobol"
+  - "mainframe"
+  - "java"
+  - "spring-boot"
+  - "modernization"
+  - "legacy"
+  - "golden-master"
+
+defaults:
+  profile: "spring-postgres-react-aws"
+  industry: "banking"
+  database: "postgresql"
+  ui: "react"
+  cloud: "aws"
+  auto_approve: null

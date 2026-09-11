@@ -1,0 +1,60 @@
+name: spring-postgres-react-aws
+description: Default target profile - Java 21 / Spring Boot 3 / PostgreSQL / React / AWS EKS.
+
+language:   {name: java, version: "21"}
+framework:  {name: spring-boot, version: "3.3", batch: spring-batch}
+build:      {tool: maven, version: "3.9"}
+persistence: {orm: spring-data-jpa, complex_reads: jooq, migration: flyway}
+database:   {vendor: postgresql, version: "16", type_map: references/db2-to-postgres-types.md}
+api:        {style: rest, spec: openapi-3.1, internal: grpc-optional}
+ui:         {framework: react, version: "18", language: typescript, a11y: wcag-2.2-AA}
+messaging:  {broker: kafka, legacy_source: ibm-mq}
+cache:      {provider: redis}
+runtime:    {platform: kubernetes, flavour: eks, batch: k8s-jobs}
+iac:        {tool: terraform}
+observability: {instrumentation: opentelemetry, metrics: prometheus, logs: loki, traces: tempo}
+security:   {authn: oidc, authz: spring-security, secrets: aws-secrets-manager, encryption: kms}
+cicd:       {platform: github-actions}
+
+conventions:
+  money_type: java.math.BigDecimal
+  rounding: explicit
+  package_by: bounded-context
+  module_boundaries: archunit-enforced
+
+# ---- Platform defaults (ADR-000). Added after the first CardDemo build run, in
+# which the generator stopped on each of these and asked. They are decided here.
+transactions:
+  strategy: spring-declarative          # @Transactional on application-service methods
+  batch: spring-batch-chunk
+  escalate_only_for: cross-resource-manager units of work identified in the spec
+integration:
+  framework: spring-integration
+configuration:
+  credentials: environment-variables    # never in source, never in the graph
+  profiles:
+    dev:  {purpose: unattended QA/verification, credentials: committed-defaults, data: seeded}
+    qa:   {credentials: env-only}
+    prod: {credentials: env-only, secrets: aws-secrets-manager}
+local_runtime:
+  mode: docker-compose                  # the agent sandbox cannot host a Spring Boot JVM
+  services: [app, postgresql, kafka]
+  health: /actuator/health
+  start: "docker compose up -d --build && scripts/wait-for-healthy.sh"
+code_structure:
+  package_by: bounded-context
+  layers: [api, application, domain, infrastructure]
+  skeleton_first: true                  # skeleton compiles + ArchUnit green before any rule
+testing:
+  unit: junit-5
+  integration: {runner: failsafe, database: testcontainers-postgresql, data_lifecycle: per-suite-create-destroy, order_independent: true}
+  parallel: {enabled: true, junit_parallel: true, fork_count: "1C"}
+  coverage_targets: {business_rules: 100, use_cases: 100}
+ui_detail:
+  language: typescript
+  bundler: vite
+  routing: react-router
+  server_state: react-query
+  forms: react-hook-form
+  components: mui                       # programme-wide choice; override here, never per wave
+
