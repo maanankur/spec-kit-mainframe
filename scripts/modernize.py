@@ -10,12 +10,20 @@ to the agent pipeline at the first point that actually needs human judgement.
 
 Output location
 ---------------
---out DIR   explicit destination.
-default     a sibling of the COBOL application, in the SAME PARENT DIRECTORY,
-            named "<app-name>-modernized".
+--out DIR   explicit destination (relative paths resolve against the CURRENT
+            WORKING DIRECTORY -- the Spec Kit project you ran this from).
+default     a directory in the CURRENT WORKING DIRECTORY, named
+            "<app-name>-modernized". The COBOL application can live anywhere;
+            only the workspace this command creates is placed relative to
+            where you ran it.
 
-              D:/Projects/carddemo            <- input  (never written to)
-              D:/Projects/carddemo-modernized <- output (everything lands here)
+              (cwd) my-spec-kit-project/       <- run the command from here
+              D:/Projects/carddemo             <- source, passed as an argument (never written to)
+              my-spec-kit-project/carddemo-modernized/   <- output (everything lands here)
+
+Refused unconditionally if the resolved output would land inside the source
+tree (nested under it, or equal to it) -- the source stays read-only no matter
+where the command is run from.
 
 The source tree is opened read-only. Nothing is ever written into it. That is
 what makes this safe to point at a repository you do not own.
@@ -492,8 +500,8 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("out_positional", nargs="?", default=None, metavar="output-path",
                     help="output directory (same as --out)")
     ap.add_argument("--out", "-o", default=None,
-                    help="output directory (default: <source>-modernized, "
-                         "as a sibling in the same parent directory)")
+                    help="output directory, relative to the current working directory "
+                         "(default: ./<source-name>-modernized)")
     ap.add_argument("--profile", default="spring-postgres-react-aws")
     ap.add_argument("--industry", default="banking",
                     choices=["banking", "insurance", "telecom", "retail", "government", "none"])
@@ -517,9 +525,11 @@ def main(argv: list[str] | None = None) -> int:
 
     chosen_out = args.out or args.out_positional
     out = (Path(chosen_out).expanduser().resolve() if chosen_out
-           else src.parent / f"{src.name}-modernized")
+           else Path.cwd() / f"{src.name}-modernized")
     if out == src or src in out.parents:
-        die("output must not be inside the source tree - the source is opened read-only")
+        die("output must not be inside the source tree - the source is opened read-only "
+            f"(resolved output: {out}; if you meant a path under the current directory, "
+            "check you did not run this from inside the COBOL application itself)")
 
     rule("intake")
     log(f"  source   {src}")

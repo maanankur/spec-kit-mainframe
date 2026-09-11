@@ -9,7 +9,7 @@ comparison of the real COBOL running under GnuCOBOL against the generated Java).
 ## Install
 
 ```bash
-specify extension add mainframe --from https://github.com/ankurmaan/spec-kit-mainframe/archive/refs/tags/v1.0.0.zip
+specify extension add mainframe --from https://github.com/maanankur/spec-kit-mainframe/archive/refs/tags/v1.0.1.zip
 # or, for development:
 specify extension add --dev /path/to/spec-kit-mainframe
 specify extension list
@@ -20,7 +20,7 @@ Requires Python ≥ 3.10 on the PATH; Docker for the GnuCOBOL legacy harness and
 ## Use
 
 ```
-/speckit.mainframe.modernize /path/to/cobol-app                # phases 0-1, work-package plan; stops at the gap list
+/speckit.mainframe.modernize /path/to/cobol-app                # source anywhere, read-only; workspace lands in the CURRENT DIRECTORY as ./cobol-app-modernized
 /speckit.mainframe.spec          # phase 2 -> Gate G1     /speckit.mainframe.decompose  # phase 3 -> G2
 /speckit.mainframe.architect     # phase 4 -> G3         /speckit.mainframe.data       # phase 5 -> G4
 /speckit.mainframe.build         # phase 6 -> G5         /speckit.mainframe.verify     # phases 7-8 -> G6/G7
@@ -30,6 +30,13 @@ Requires Python ≥ 3.10 on the PATH; Docker for the GnuCOBOL legacy harness and
 
 `/speckit.mainframe.modernize <app> --auto-approve alice@x` runs unattended: gates are decided
 in the approver's name, red evidence is waived (owner, control, expiry), never approved.
+
+**Where the workspace goes:** run this from your Spec Kit project directory. The `<app>`
+argument is the path to the legacy COBOL application — it can live anywhere and is opened
+read-only. The output workspace (`modernization/` + `target/`) is created **relative to
+where you ran the command**, defaulting to `./<app-name>-modernized`; pass a second path or
+`--out` to place it elsewhere. It is refused outright if that would put the workspace inside
+the source tree.
 
 Hooks (all optional, offered by Spec Kit): after `/speckit.constitution` → add the
 non-negotiables; before `/speckit.specify` → recover the legacy specification; before

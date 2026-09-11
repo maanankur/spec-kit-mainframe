@@ -3,10 +3,10 @@ schema_version: "1.0"
 extension:
   id: "mainframe"
   name: "Mainframe Modernization (COBOL to Java)"
-  version: "1.0.0"
+  version: "1.0.1"
   description: "Gated, evidence-driven COBOL-to-Java modernization: deterministic discovery, specification recovery with paragraph-level traceability, domain decomposition, target architecture, data modernization with a byte-level fidelity proof, forward engineering behind a specification firewall, and golden-master equivalence verification"
   author: "Ankur Maan"
-  repository: "https://github.com/ankurmaan/spec-kit-mainframe"
+  repository: "https://github.com/maanankur/spec-kit-mainframe"
   license: "MIT"
 
 requires:

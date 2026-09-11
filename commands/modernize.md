@@ -9,7 +9,7 @@ scripts:
 # Modernize a COBOL application
 
 Arguments: `$ARGUMENTS` — `<cobol-app-path> [output-path] [--assess] [--until G3] [--auto-approve <id>] [--profile …] [--industry …] [--database …] [--ui …] [--force]`.
-With no arguments, resume from `<output>/modernization/state.json` (default output: a sibling of the source named `<app>-modernized`).
+`<cobol-app-path>` can point anywhere — it is opened read-only and never written to. `[output-path]` (or `--out`) is relative to the **current working directory** — the Spec Kit project this command is run from. With neither given, the workspace is created at `./<app-name>-modernized` under the current directory. With no arguments at all, resume from `<output>/modernization/state.json` in the current directory.
 
 ## Step 1 — bootstrap (deterministic, always safe to re-run)
 
